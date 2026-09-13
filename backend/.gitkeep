@@ -1,0 +1,9 @@
+# Node.js + TypeScript + Fastify Backend
+# Modular Monolith Architecture:
+# - auth (Argon2id, RS256 JWT, RBAC)
+# - catalog (Books, Chapters)
+# - billing (Checkout sessions, webhooks, entitlements)
+# - recordings (Sessions, takes, ffprobe inspection)
+# - playback (SAS token generation, range streaming auth)
+# - websocket (/ws/v1/channels telemetry & events)
+# Do NOT initialize application dependencies until Phase 1 Sprint 3.

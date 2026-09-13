@@ -1,0 +1,4 @@
+# Next.js Client Web Storefront
+# Catalog discovery, user registration, and book/subscription purchase.
+# STRICT ARCHITECTURAL BOUNDARY: NO AUDIO PLAYBACK.
+# Do NOT initialize Next.js project until Phase 1 Sprint 6.

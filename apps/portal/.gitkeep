@@ -1,0 +1,5 @@
+# React + Tailwind Unified Recording & Admin Portal
+# Role-based access:
+# - /studio: Narrator recording, mic metering, chunked audio upload
+# - /admin: Review queue, ffprobe validation, chapter binding, catalog activation
+# Do NOT initialize React project until Phase 1 Sprint 4.
