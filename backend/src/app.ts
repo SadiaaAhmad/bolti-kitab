@@ -18,7 +18,9 @@ import helmet from '@fastify/helmet';
 import sensible from '@fastify/sensible';
 import { config } from './config/env.js';
 import dbPlugin from './plugins/db.js';
+import authPlugin from './plugins/auth.js';
 import healthRoutes from './routes/health.js';
+import authRoutes from './modules/auth/index.js';
 
 export async function buildApp() {
   const fastify = Fastify({
@@ -63,18 +65,21 @@ export async function buildApp() {
   // ─── Sensible Error Utilities ─────────────────────────────────────────────
   await fastify.register(sensible);
 
-  // ─── Database Pool ────────────────────────────────────────────────────────
+  // ─── Auth Plugin (authenticate + requireRole decorators) ────────────────
+  await fastify.register(authPlugin);
+
+  // ─── Database Pool ──────────────────────────────────────────────────────
   await fastify.register(dbPlugin);
 
-  // ─── Routes ───────────────────────────────────────────────────────────────
+  // ─── Routes ──────────────────────────────────────────────────────
   await fastify.register(healthRoutes);
+  await fastify.register(authRoutes, { prefix: '/api/v1/auth' });
 
-  // Placeholder for Phase 1 Sprint 3+ modules — register here as implemented:
-  // await fastify.register(authRoutes, { prefix: '/api/v1/auth' });
-  // await fastify.register(catalogRoutes, { prefix: '/api/v1/catalog' });
-  // await fastify.register(billingRoutes, { prefix: '/api/v1/billing' });
+  // Phase 1 Sprint 3+ placeholders — register as implemented:
+  // await fastify.register(catalogRoutes,    { prefix: '/api/v1/catalog' });
+  // await fastify.register(billingRoutes,    { prefix: '/api/v1/billing' });
   // await fastify.register(recordingsRoutes, { prefix: '/api/v1/recordings' });
-  // await fastify.register(playbackRoutes, { prefix: '/api/v1/playback' });
+  // await fastify.register(playbackRoutes,   { prefix: '/api/v1/playback' });
 
   // ─── 404 Handler ──────────────────────────────────────────────────────────
   fastify.setNotFoundHandler((_request, reply) => {

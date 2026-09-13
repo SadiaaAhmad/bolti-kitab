@@ -93,5 +93,7 @@ export async function checkDatabaseHealth(): Promise<{
 
 // ─── Graceful Shutdown ────────────────────────────────────────────────────────
 export async function closePool(): Promise<void> {
-  await pool.end();
+  if (!pool.ended) {
+    await pool.end();
+  }
 }

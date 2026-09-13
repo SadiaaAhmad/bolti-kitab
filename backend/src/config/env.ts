@@ -52,6 +52,18 @@ export const DB_CONNECTION_TIMEOUT_MS = parseInt(optionalEnv('DB_CONNECTION_TIME
 // ─── CORS ────────────────────────────────────────────────────────────────────
 export const CORS_ORIGIN = optionalEnv('CORS_ORIGIN', 'http://localhost:3001');
 
+// ─── JWT (RS256 Asymmetric) ────────────────────────────────────────────────────
+// PEM keys may be stored with literal \n sequences in .env — we unescape them.
+function loadPemKey(name: string): string {
+  const raw = requireEnv(name);
+  return raw.replace(/\\n/g, '\n');
+}
+export const JWT_PRIVATE_KEY = loadPemKey('JWT_PRIVATE_KEY');
+export const JWT_PUBLIC_KEY  = loadPemKey('JWT_PUBLIC_KEY');
+export const JWT_EXPIRES_IN  = optionalEnv('JWT_EXPIRES_IN', '1h');
+export const JWT_ISSUER      = optionalEnv('JWT_ISSUER',     'bolti-kitab');
+export const JWT_AUDIENCE    = optionalEnv('JWT_AUDIENCE',   'bolti-kitab-client');
+
 // ─── Consolidated config object (for injection/testing convenience) ──────────
 export const config = {
   server: {
@@ -77,5 +89,12 @@ export const config = {
   },
   cors: {
     origin: CORS_ORIGIN,
+  },
+  jwt: {
+    privateKey: JWT_PRIVATE_KEY,
+    publicKey:  JWT_PUBLIC_KEY,
+    expiresIn:  JWT_EXPIRES_IN,
+    issuer:     JWT_ISSUER,
+    audience:   JWT_AUDIENCE,
   },
 } as const;
