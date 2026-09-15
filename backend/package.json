@@ -15,8 +15,9 @@
     "type-check": "tsc --noEmit",
     "db:migrate": "tsx src/db/migrate.ts",
     "generate-keys": "tsx scripts/generate-keys.ts",
-    "test": "tsx --import ./src/test/setup-env.ts --test src/**/*.test.ts",
-    "test:auth": "tsx --import ./src/test/setup-env.ts --test src/modules/auth/auth.test.ts"
+    "test": "tsx --import ./src/test/setup-env.ts --test --test-concurrency=1 src/**/*.test.ts",
+    "test:auth": "tsx --import ./src/test/setup-env.ts --test src/modules/auth/auth.test.ts",
+    "test:catalog": "tsx --import ./src/test/setup-env.ts --test src/modules/catalog/catalog.test.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.2",

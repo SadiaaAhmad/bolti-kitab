@@ -122,3 +122,8 @@ export async function truncateTestUsers(): Promise<void> {
   // CASCADE handles any FK-dependent rows in related tables
   await tp.query(`TRUNCATE TABLE users CASCADE`);
 }
+
+export async function truncateTestCatalog(): Promise<void> {
+  const tp = getTestPool();
+  await tp.query(`TRUNCATE TABLE books CASCADE`);
+}

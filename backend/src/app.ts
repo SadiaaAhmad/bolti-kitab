@@ -21,6 +21,7 @@ import dbPlugin from './plugins/db.js';
 import authPlugin from './plugins/auth.js';
 import healthRoutes from './routes/health.js';
 import authRoutes from './modules/auth/index.js';
+import catalogRoutes from './modules/catalog/index.js';
 
 export async function buildApp() {
   const fastify = Fastify({
@@ -74,6 +75,7 @@ export async function buildApp() {
   // ─── Routes ──────────────────────────────────────────────────────
   await fastify.register(healthRoutes);
   await fastify.register(authRoutes, { prefix: '/api/v1/auth' });
+  await fastify.register(catalogRoutes, { prefix: '/api/v1/books' });
 
   // Phase 1 Sprint 3+ placeholders — register as implemented:
   // await fastify.register(catalogRoutes,    { prefix: '/api/v1/catalog' });

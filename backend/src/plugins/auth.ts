@@ -28,6 +28,7 @@ import type { AuthUser, UserRole } from '../modules/auth/types.js';
 declare module 'fastify' {
   interface FastifyInstance {
     authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+    optionalAuthenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     requireRole: (...roles: UserRole[]) => (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
 
@@ -80,6 +81,29 @@ const authPlugin: FastifyPluginAsync = async (fastify) => {
     }
   };
 
+  // ── optionalAuthenticate preHandler ──────────────────────────────────────
+  const optionalAuthenticate = async (
+    request: FastifyRequest,
+    _reply: FastifyReply,
+  ): Promise<void> => {
+    const authHeader = request.headers.authorization;
+    if (authHeader === undefined || !authHeader.startsWith('Bearer ')) {
+      return;
+    }
+
+    const token = authHeader.slice(7);
+    try {
+      const payload = verifyAccessToken(token);
+      request.authUser = {
+        id: payload.sub,
+        email: payload.email,
+        role: payload.role,
+      };
+    } catch {
+      // Ignore token verification errors for optional auth — treat as anonymous
+    }
+  };
+
   // ── requireRole preHandler factory ───────────────────────────────────────
   const requireRole = (...allowedRoles: UserRole[]) => {
     return async (
@@ -98,6 +122,7 @@ const authPlugin: FastifyPluginAsync = async (fastify) => {
   };
 
   fastify.decorate('authenticate', authenticate);
+  fastify.decorate('optionalAuthenticate', optionalAuthenticate);
   fastify.decorate('requireRole', requireRole);
 };
 
