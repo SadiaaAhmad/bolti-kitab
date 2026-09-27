@@ -79,15 +79,28 @@ export async function setupTestDatabase(): Promise<void> {
   await admin.query(`CREATE DATABASE ${TEST_DB_NAME}`);
   console.log(`[test-db] Fresh database created: ${TEST_DB_NAME}`);
 
-  // Apply schema migration to test database
-  const migrationPath = path.resolve(
-    process.cwd(),
-    '../database/migrations/001_initial_phase1_schema.sql',
-  );
-  const sql = fs.readFileSync(migrationPath, 'utf8');
+  // Apply all schema migrations to test database in order
+  const migrationsDir = path.resolve(process.cwd(), '../database/migrations');
+  const migrationFiles = fs
+    .readdirSync(migrationsDir)
+    .filter((f) => f.endsWith('.sql') && !f.endsWith('.down.sql'))
+    .sort();
+
   const tp = getTestPool();
-  await tp.query(sql);
-  console.log(`[test-db] Schema migration applied to ${TEST_DB_NAME}.`);
+  for (const file of migrationFiles) {
+    const filePath = path.join(migrationsDir, file);
+    const sql = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
+    await tp.query(sql);
+    console.log(`[test-db] Applied migration: ${file}`);
+  }
+
+  // Apply development/test seeds
+  const seedPath = path.resolve(process.cwd(), '../database/seeds/development_billing_plans.sql');
+  if (fs.existsSync(seedPath)) {
+    const seedSql = fs.readFileSync(seedPath, 'utf8').replace(/^\uFEFF/, '');
+    await tp.query(seedSql);
+    console.log(`[test-db] Applied seed: development_billing_plans.sql`);
+  }
 }
 
 // ─── Teardown: Drop bolti_kitab_test entirely ─────────────────────────────────
@@ -137,5 +150,10 @@ export async function truncateTestRecordings(): Promise<void> {
 export async function truncateTestPlayback(): Promise<void> {
   const tp = getTestPool();
   await tp.query(`TRUNCATE TABLE listening_progress, entitlements CASCADE`);
+}
+
+export async function truncateTestBilling(): Promise<void> {
+  const tp = getTestPool();
+  await tp.query(`TRUNCATE TABLE payments, subscriptions, entitlements CASCADE`);
 }
 

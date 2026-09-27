@@ -24,6 +24,7 @@ import authRoutes from './modules/auth/index.js';
 import catalogRoutes from './modules/catalog/index.js';
 import recordingRoutes from './modules/recordings/index.js';
 import playbackRoutes from './modules/playback/index.js';
+import billingRoutes from './modules/billing/index.js';
 
 export async function buildApp() {
   const fastify = Fastify({
@@ -61,7 +62,7 @@ export async function buildApp() {
   await fastify.register(cors, {
     origin: config.cors.origin,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
     credentials: true,
   });
 
@@ -80,6 +81,7 @@ export async function buildApp() {
   await fastify.register(catalogRoutes, { prefix: '/api/v1/books' });
   await fastify.register(recordingRoutes, { prefix: '/api/v1' });
   await fastify.register(playbackRoutes, { prefix: '/api/v1/playback' });
+  await fastify.register(billingRoutes, { prefix: '/api/v1/billing' });
 
   // ─── 404 Handler ──────────────────────────────────────────────────────────
   fastify.setNotFoundHandler((_request, reply) => {
