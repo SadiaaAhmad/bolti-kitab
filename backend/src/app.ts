@@ -22,6 +22,8 @@ import authPlugin from './plugins/auth.js';
 import healthRoutes from './routes/health.js';
 import authRoutes from './modules/auth/index.js';
 import catalogRoutes from './modules/catalog/index.js';
+import recordingRoutes from './modules/recordings/index.js';
+import playbackRoutes from './modules/playback/index.js';
 
 export async function buildApp() {
   const fastify = Fastify({
@@ -76,12 +78,8 @@ export async function buildApp() {
   await fastify.register(healthRoutes);
   await fastify.register(authRoutes, { prefix: '/api/v1/auth' });
   await fastify.register(catalogRoutes, { prefix: '/api/v1/books' });
-
-  // Phase 1 Sprint 3+ placeholders — register as implemented:
-  // await fastify.register(catalogRoutes,    { prefix: '/api/v1/catalog' });
-  // await fastify.register(billingRoutes,    { prefix: '/api/v1/billing' });
-  // await fastify.register(recordingsRoutes, { prefix: '/api/v1/recordings' });
-  // await fastify.register(playbackRoutes,   { prefix: '/api/v1/playback' });
+  await fastify.register(recordingRoutes, { prefix: '/api/v1' });
+  await fastify.register(playbackRoutes, { prefix: '/api/v1/playback' });
 
   // ─── 404 Handler ──────────────────────────────────────────────────────────
   fastify.setNotFoundHandler((_request, reply) => {

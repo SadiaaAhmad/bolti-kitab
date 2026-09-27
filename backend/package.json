@@ -17,9 +17,18 @@
     "generate-keys": "tsx scripts/generate-keys.ts",
     "test": "tsx --import ./src/test/setup-env.ts --test --test-concurrency=1 src/**/*.test.ts",
     "test:auth": "tsx --import ./src/test/setup-env.ts --test src/modules/auth/auth.test.ts",
-    "test:catalog": "tsx --import ./src/test/setup-env.ts --test src/modules/catalog/catalog.test.ts"
+    "test:catalog": "tsx --import ./src/test/setup-env.ts --test src/modules/catalog/catalog.test.ts",
+    "test:recordings": "tsx --import ./src/test/setup-env.ts --test src/modules/recordings/recordings.test.ts",
+    "test:playback": "tsx --import ./src/test/setup-env.ts --test src/modules/playback/playback.test.ts",
+    "seed:users": "tsx scripts/seed-users.ts",
+    "ingest": "tsx scripts/ingest-real-audio.ts",
+    "test:storage:b2": "tsx scripts/test-b2-storage.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1141.0",
+    "@aws-sdk/s3-request-presigner": "^3.1141.0",
+    "@azure/identity": "^4.13.3",
+    "@azure/storage-blob": "^12.33.0",
     "@fastify/cors": "^10.0.2",
     "@fastify/helmet": "^13.0.1",
     "@fastify/sensible": "^6.0.3",

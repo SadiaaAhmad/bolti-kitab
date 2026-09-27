@@ -53,3 +53,14 @@ Thumbs.db
 # Local scratch / test outputs
 scratch/
 test-results/
+
+# Audio binaries & content cache
+.content_cache/
+downloads/
+*.mp3
+*.wav
+*.m4a
+*.aac
+*.ogg
+*.flac
+

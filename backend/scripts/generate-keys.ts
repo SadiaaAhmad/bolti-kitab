@@ -59,7 +59,7 @@ function main(): void {
   updateEnvFile(ENV_FILE, {
     JWT_PRIVATE_KEY: pemToEnvValue(privateKey),
     JWT_PUBLIC_KEY:  pemToEnvValue(publicKey),
-    JWT_EXPIRES_IN:  '1h',
+    JWT_EXPIRES_IN:  '30d',
     JWT_ISSUER:      'bolti-kitab',
     JWT_AUDIENCE:    'bolti-kitab-client',
   });

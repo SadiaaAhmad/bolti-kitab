@@ -60,9 +60,54 @@ function loadPemKey(name: string): string {
 }
 export const JWT_PRIVATE_KEY = loadPemKey('JWT_PRIVATE_KEY');
 export const JWT_PUBLIC_KEY  = loadPemKey('JWT_PUBLIC_KEY');
-export const JWT_EXPIRES_IN  = optionalEnv('JWT_EXPIRES_IN', '1h');
+export const JWT_EXPIRES_IN  = optionalEnv('JWT_EXPIRES_IN', '30d');
 export const JWT_ISSUER      = optionalEnv('JWT_ISSUER',     'bolti-kitab');
 export const JWT_AUDIENCE    = optionalEnv('JWT_AUDIENCE',   'bolti-kitab-client');
+
+// ─── Object Storage ────────────────────────────────────────────────────────────────────────────────
+// STORAGE_PROVIDER: mock (default for safety and hermetic tests) | b2 (active Phase 1) | azure
+export const STORAGE_PROVIDER = optionalEnv('STORAGE_PROVIDER', 'mock');
+
+// Backblaze B2 (S3-Compatible API - Active Phase 1 Real Provider)
+export const B2_ENDPOINT        = optionalEnv('B2_ENDPOINT', 'https://s3.eu-central-003.backblazeb2.com');
+export const B2_REGION          = optionalEnv('B2_REGION', 'eu-central-003');
+export const B2_BUCKET_NAME     = optionalEnv('B2_BUCKET_NAME', 'bolti-kitab-media');
+export const B2_KEY_ID          = optionalEnv('B2_KEY_ID', '');
+export const B2_APPLICATION_KEY = optionalEnv('B2_APPLICATION_KEY', '');
+
+// Azure Blob Storage (Alternate Provider - Retained)
+export const AZURE_STORAGE_ACCOUNT_NAME = optionalEnv(
+  'AZURE_STORAGE_ACCOUNT_NAME',
+  optionalEnv('STORAGE_ACCOUNT_NAME', '')
+);
+export const AZURE_STORAGE_ACCOUNT_KEY = optionalEnv(
+  'AZURE_STORAGE_ACCOUNT_KEY',
+  optionalEnv('STORAGE_ACCOUNT_KEY', '')
+);
+export const AZURE_STORAGE_CONNECTION_STRING = optionalEnv('AZURE_STORAGE_CONNECTION_STRING', '');
+export const AZURE_STORAGE_CONTAINER_NAME = optionalEnv(
+  'AZURE_STORAGE_CONTAINER_NAME',
+  optionalEnv(
+    'AZURE_CONTAINER_AUDIO_PRIVATE',
+    optionalEnv('STORAGE_CONTAINER_NAME', 'audiobooks-private')
+  )
+);
+
+// TTL Settings
+export const STORAGE_UPLOAD_TTL_SECONDS = parseInt(
+  optionalEnv(
+    'STORAGE_UPLOAD_TTL_SECONDS',
+    optionalEnv('AZURE_SAS_UPLOAD_EXPIRATION_SECONDS', optionalEnv('UPLOAD_TOKEN_TTL_SECONDS', '1800'))
+  ),
+  10
+);
+export const STORAGE_PLAYBACK_TTL_SECONDS = parseInt(
+  optionalEnv(
+    'STORAGE_PLAYBACK_TTL_SECONDS',
+    optionalEnv('AZURE_SAS_PLAYBACK_EXPIRATION_SECONDS', '86400')
+  ),
+  10
+);
 
 // ─── Consolidated config object (for injection/testing convenience) ──────────
 export const config = {
@@ -96,5 +141,28 @@ export const config = {
     expiresIn:  JWT_EXPIRES_IN,
     issuer:     JWT_ISSUER,
     audience:   JWT_AUDIENCE,
+  },
+  storage: {
+    provider:         STORAGE_PROVIDER,
+    b2: {
+      endpoint:       B2_ENDPOINT,
+      region:         B2_REGION,
+      bucketName:     B2_BUCKET_NAME,
+      keyId:          B2_KEY_ID,
+      applicationKey: B2_APPLICATION_KEY,
+    },
+    azure: {
+      accountName:      AZURE_STORAGE_ACCOUNT_NAME,
+      accountKey:       AZURE_STORAGE_ACCOUNT_KEY,
+      connectionString: AZURE_STORAGE_CONNECTION_STRING,
+      containerName:    AZURE_STORAGE_CONTAINER_NAME,
+    },
+    // Top-level aliases for backwards compatibility
+    accountName:      AZURE_STORAGE_ACCOUNT_NAME,
+    accountKey:       AZURE_STORAGE_ACCOUNT_KEY,
+    connectionString: AZURE_STORAGE_CONNECTION_STRING,
+    containerName:    AZURE_STORAGE_CONTAINER_NAME,
+    uploadTtlSeconds: STORAGE_UPLOAD_TTL_SECONDS,
+    playbackTtlSeconds: STORAGE_PLAYBACK_TTL_SECONDS,
   },
 } as const;

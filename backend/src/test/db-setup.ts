@@ -127,3 +127,15 @@ export async function truncateTestCatalog(): Promise<void> {
   const tp = getTestPool();
   await tp.query(`TRUNCATE TABLE books CASCADE`);
 }
+
+export async function truncateTestRecordings(): Promise<void> {
+  const tp = getTestPool();
+  // CASCADE removes all dependent recordings rows
+  await tp.query(`TRUNCATE TABLE recording_sessions CASCADE`);
+}
+
+export async function truncateTestPlayback(): Promise<void> {
+  const tp = getTestPool();
+  await tp.query(`TRUNCATE TABLE listening_progress, entitlements CASCADE`);
+}
+
